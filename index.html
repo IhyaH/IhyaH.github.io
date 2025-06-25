@@ -4,183 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IhyaH的个人主页</title>
-    
-    <!-- SEO优化 -->
-    <meta name="description" content="IhyaH的个人主页 - 一名对技术充满热情的开发者，专注于前端开发和用户体验设计">
-    <meta name="keywords" content="IhyaH, 前端开发, 个人主页, 开发者, JavaScript, HTML, CSS">
-    <meta name="author" content="IhyaH">
-    
-    <!-- Open Graph标签 -->
-    <meta property="og:title" content="IhyaH的个人主页">
-    <meta property="og:description" content="一名对技术充满热情的开发者，专注于前端开发和用户体验设计">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://github.com/IhyaH.png">
-    
-    <!-- 性能优化 -->
-    <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
-    
     <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <!-- 引入Google字体 "Inter" -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <!-- 引入Font Awesome图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         /* 自定义样式 */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            overflow-x: hidden; /* 防止水平滚动 */
+            background-color: #f8fafc; /* 使用柔和的灰色背景 */
         }
-        
-        /* 防止水平滚动的全局设置 */
-        html {
-            overflow-x: hidden;
-        }
-        
-        /* 确保所有容器不会超出视口 */
-        * {
-            max-width: 100%;
-            box-sizing: border-box;
-        }
-        
-        /* 改进的卡片悬浮效果 */
-        .project-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        /* 卡片悬浮效果 */
         .project-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        
-        /* 改进的淡入动画 */
+        /* 页面加载时的淡入动画 */
         .fade-in {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        
-        /* 滑入动画 */
-        .slide-in-left {
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        .slide-in-right {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        .slide-in-left.visible,
-        .slide-in-right.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        /* 加载骨架屏 */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
-        /* 按钮微交互 */
-        .btn-primary {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-        
-        /* 头像加载优化 */
-        .avatar {
-            transition: all 0.3s ease;
-        }
-        .avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        /* 滚动指示器 */
-        .scroll-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: linear-gradient(to right, #6366f1, #8b5cf6);
-            z-index: 1000;
-            transition: width 0.1s ease;
-        }
-        
-        /* 移动端优化 */
-        @media (max-width: 768px) {
-            .container {
-                padding-left: 1rem !important;
-                padding-right: 1rem !important;
-            }
-            
-            /* 确保项目展示部分在移动端不会溢出 */
-            #projects {
-                margin-left: -1rem !important;
-                margin-right: -1rem !important;
-                padding-left: 1rem !important;
-                padding-right: 1rem !important;
-            }
-            
-            /* 防止按钮和卡片在移动端溢出 */
-            .project-card {
-                max-width: 100%;
-                overflow: hidden;
-            }
-            
-            /* 确保文本不会导致水平滚动 */
-            h1, h2, h3, p {
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
-    
-    <!-- 滚动进度指示器 -->
-    <div class="scroll-indicator" id="scroll-indicator"></div>
-    
-    <!-- 加载指示器 -->
-    <div id="loading-overlay" class="fixed inset-0 bg-white z-50 flex items-center justify-center transition-opacity duration-500">
-        <div class="text-center">
-            <div class="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-            <p class="text-slate-600">加载中...</p>
-        </div>
-    </div>
 
     <!-- 导航容器 (动态加载导航组件) -->
     <div id="navbar-container"></div>
@@ -193,24 +48,23 @@
             <img 
                 src="https://github.com/IhyaH.png" 
                 alt="IhyaH的头像" 
-                class="avatar w-32 h-32 md:w-40 md:h-40 rounded-full mx-auto mb-6 shadow-xl border-4 border-white"
-                loading="eager"
+                class="w-32 h-32 md:w-40 md:h-40 rounded-full mx-auto mb-6 shadow-xl border-4 border-white"
                 onerror="this.onerror=null;this.src='https://placehold.co/160x160/e2e8f0/334155?text=IhyaH';"
             >
             <h1 class="text-4xl md:text-6xl font-bold text-slate-900 mb-4">你好, 我是IhyaH</h1>
             <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-8">
                 一名对技术充满热情的开发者，热衷于构建精美、实用的应用程序和开源项目。
             </p>
-            <a href="#projects" class="btn-primary bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-indigo-700 transition duration-300 shadow-lg">
+            <a href="#projects" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-indigo-700 transition duration-300 shadow-lg">
                 查看我的作品
             </a>
         </section>
 
         <!-- 关于我 -->
-        <section id="about" class="py-20 md:py-32 slide-in-left">
+        <section id="about" class="py-20 md:py-32 fade-in">
             <div class="max-w-4xl mx-auto text-center">
                 <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">关于我</h2>
-                <div class="bg-white p-8 md:p-12 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="bg-white p-8 md:p-12 rounded-xl shadow-lg">
                     <p class="text-slate-600 text-left md:text-lg leading-relaxed">
                         我是一名充满创造力的开发者，对代码有着无限的热情。我专注于 <strong class="text-indigo-600">前端开发</strong> 和 <strong class="text-indigo-600">用户体验设计</strong>，但也涉足后端技术栈。我喜欢将复杂的想法转化为简洁、优雅且用户友好的解决方案。
                         <br><br>
@@ -220,56 +74,18 @@
             </div>
         </section>
 
+
         <!-- 项目展示 -->
-        <section id="projects" class="py-20 md:py-32 bg-slate-100 slide-in-right" style="margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem;">
+        <section id="projects" class="py-20 md:py-32 bg-slate-100 -mx-6 px-6 fade-in">
              <div class="container mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold text-slate-900 text-center mb-12">我的项目</h2>
-                
-                <!-- 项目加载骨架屏 -->
-                <div id="projects-skeleton" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="skeleton w-full h-48"></div>
-                        <div class="p-6">
-                            <div class="skeleton h-6 w-3/4 mb-2 rounded"></div>
-                            <div class="skeleton h-4 w-full mb-2 rounded"></div>
-                            <div class="skeleton h-4 w-2/3 mb-4 rounded"></div>
-                            <div class="flex justify-between">
-                                <div class="skeleton h-4 w-1/3 rounded"></div>
-                                <div class="skeleton h-4 w-1/4 rounded"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="skeleton w-full h-48"></div>
-                        <div class="p-6">
-                            <div class="skeleton h-6 w-3/4 mb-2 rounded"></div>
-                            <div class="skeleton h-4 w-full mb-2 rounded"></div>
-                            <div class="skeleton h-4 w-2/3 mb-4 rounded"></div>
-                            <div class="flex justify-between">
-                                <div class="skeleton h-4 w-1/3 rounded"></div>
-                                <div class="skeleton h-4 w-1/4 rounded"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="skeleton w-full h-48"></div>
-                        <div class="p-6">
-                            <div class="skeleton h-6 w-3/4 mb-2 rounded"></div>
-                            <div class="skeleton h-4 w-full mb-2 rounded"></div>
-                            <div class="skeleton h-4 w-2/3 mb-4 rounded"></div>
-                            <div class="flex justify-between">
-                                <div class="skeleton h-4 w-1/3 rounded"></div>
-                                <div class="skeleton h-4 w-1/4 rounded"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style="display: none;" id="projects-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
                     <!-- 项目卡片容器 - 由JavaScript动态生成 -->
-                    <div id="projects-container" class="contents">
-                        <!-- 项目卡片将通过JavaScript动态加载 -->
-                    </div>
+                <div id="projects-container" class="contents">
+                    <!-- 项目卡片将通过JavaScript动态加载 -->
+                </div>
+
                 </div>
              </div>
         </section>
@@ -281,11 +97,11 @@
                 我总是在寻找新的挑战和合作机会。欢迎随时通过下面的方式与我联系。
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="mailto:ihyah@foxmail.com" class="btn-primary bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-indigo-700 transition duration-300 shadow-lg inline-flex items-center space-x-2">
+                <a href="mailto:ihyah@foxmail.com" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-indigo-700 transition duration-300 shadow-lg inline-flex items-center space-x-2">
                     <i class="fas fa-envelope"></i>
                     <span>发送邮件</span>
                 </a>
-                <a href="https://github.com/IhyaH" target="_blank" rel="noopener noreferrer" class="btn-primary bg-slate-800 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-slate-900 transition duration-300 shadow-lg inline-flex items-center space-x-2">
+                <a href="https://github.com/IhyaH" target="_blank" class="bg-slate-800 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-slate-900 transition duration-300 shadow-lg inline-flex items-center space-x-2">
                     <i class="fab fa-github"></i>
                     <span>GitHub</span>
                 </a>
@@ -302,7 +118,7 @@
     <!-- 页脚 -->
     <footer class="bg-slate-800 text-slate-400 py-6">
         <div class="container mx-auto px-6 text-center">
-            <p>&copy; <span id="year"></span> <a href="index.html" class="text-slate-400 hover:text-white transition duration-300">IhyaH</a></p>
+            <p>&copy; <span id="year"></span> <a href="index.html" class="text-slate-400 hover:text-white transition duration-300">IhyaH.</a></p>
         </div>
     </footer>
 
@@ -310,167 +126,56 @@
     <script src="components/project-card.js"></script>
     
     <script>
-        // 性能监控
-        const performanceObserver = new PerformanceObserver((list) => {
-            for (const entry of list.getEntries()) {
-                if (entry.entryType === 'navigation') {
-                    console.log('页面加载时间:', entry.loadEventEnd - entry.loadEventStart, 'ms');
-                }
-            }
-        });
-        performanceObserver.observe({entryTypes: ['navigation']});
-        
-        // 滚动进度指示器
-        function updateScrollIndicator() {
-            const scrollTop = window.pageYOffset;
-            const docHeight = document.body.offsetHeight - window.innerHeight;
-            const scrollPercent = (scrollTop / docHeight) * 100;
-            document.getElementById('scroll-indicator').style.width = scrollPercent + '%';
-        }
-        
-        window.addEventListener('scroll', updateScrollIndicator);
-        
-        // 页面加载完成后隐藏加载指示器
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                const loadingOverlay = document.getElementById('loading-overlay');
-                loadingOverlay.style.opacity = '0';
-                setTimeout(() => {
-                    loadingOverlay.style.display = 'none';
-                }, 500);
-            }, 800);
-        });
-        
         // 设置当前年份
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // 导航栏加载（带错误处理）
-        async function loadNavbar() {
-            try {
-                const response = await fetch('components/navbar.html');
-                if (!response.ok) throw new Error('导航栏加载失败');
-                const data = await response.text();
+        // 导航栏加载
+        fetch('components/navbar.html')
+            .then(response => response.text())
+            .then(data => {
                 document.getElementById('navbar-container').innerHTML = data;
-            } catch (error) {
-                console.error('Error loading navbar:', error);
-                // 提供fallback导航
-                document.getElementById('navbar-container').innerHTML = `
-                    <nav class="bg-white shadow-sm">
-                        <div class="container mx-auto px-6 py-4">
-                            <div class="flex justify-between items-center">
-                                <a href="#" class="text-xl font-bold text-slate-900">IhyaH</a>
-                                <div class="space-x-6">
-                                    <a href="#about" class="text-slate-600 hover:text-slate-900">关于</a>
-                                    <a href="#projects" class="text-slate-600 hover:text-slate-900">项目</a>
-                                    <a href="#contact" class="text-slate-600 hover:text-slate-900">联系</a>
-                                </div>
-                            </div>
-                        </div>
-                    </nav>
-                `;
-            }
-        }
-        
-        // 项目卡片加载（带骨架屏）
-        async function loadProjects() {
-            try {
-                // 模拟加载时间
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                const projectsContainer = document.getElementById('projects-container');
-                const skeleton = document.getElementById('projects-skeleton');
-                const content = document.getElementById('projects-content');
-                
-                if (projectsContainer && typeof ProjectCard !== 'undefined' && typeof projectsData !== 'undefined') {
-                    projectsContainer.innerHTML = ProjectCard.renderMultiple(projectsData);
-                    
-                    // 隐藏骨架屏，显示实际内容
-                    skeleton.style.display = 'none';
-                    content.style.display = 'grid';
-                    
-                    // 为新加载的项目卡片添加动画
-                    const cards = document.querySelectorAll('.project-card');
-                    cards.forEach((card, index) => {
-                        card.style.opacity = '0';
-                        card.style.transform = 'translateY(20px)';
-                        setTimeout(() => {
-                            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                            card.style.opacity = '1';
-                            card.style.transform = 'translateY(0)';
-                        }, index * 100);
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading projects:', error);
-                // 显示错误信息
-                document.getElementById('projects-skeleton').innerHTML = `
-                    <div class="col-span-full text-center py-12">
-                        <p class="text-slate-500">项目加载失败，请刷新页面重试</p>
-                    </div>
-                `;
-            }
-        }
+            })
+            .catch(error => console.error('Error loading navbar:', error));
 
-        // 页面初始化
+        // 项目卡片加载
         document.addEventListener('DOMContentLoaded', function() {
-            loadNavbar();
-            loadProjects();
-            
-            // 跨页面锚点支持
+            const projectsContainer = document.getElementById('projects-container');
+            if (projectsContainer && typeof ProjectCard !== 'undefined' && typeof projectsData !== 'undefined') {
+                projectsContainer.innerHTML = ProjectCard.renderMultiple(projectsData);
+            }
+        });
+
+        // 跨页面锚点支持
+        document.addEventListener('DOMContentLoaded', function() {
             const hash = window.location.hash;
             if (hash) {
-                setTimeout(() => {
-                    const element = document.querySelector(hash);
-                    if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }, 1000);
+                const element = document.querySelector(hash);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
             }
         });
 
-        // 改进的滚动动画
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
+        // 滚动时的淡入效果
+        const faders = document.querySelectorAll('.fade-in');
+        const appearOptions = {
+            threshold: 0.2, // 当元素20%可见时触发
+            rootMargin: "0px 0px -50px 0px" // 向上偏移50px
         };
 
-        const observer = new IntersectionObserver(function(entries) {
+        const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
+                if (!entry.isIntersecting) {
+                    return;
+                } else {
                     entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
+                    appearOnScroll.unobserve(entry.target);
                 }
             });
-        }, observerOptions);
+        }, appearOptions);
 
-        // 观察所有需要动画的元素
-        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
-            observer.observe(el);
-        });
-        
-        // 平滑滚动优化
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-        
-        // 键盘导航支持
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Tab') {
-                document.body.classList.add('keyboard-navigation');
-            }
-        });
-        
-        document.addEventListener('mousedown', function() {
-            document.body.classList.remove('keyboard-navigation');
+        faders.forEach(fader => {
+            appearOnScroll.observe(fader);
         });
     </script>
 </body>
