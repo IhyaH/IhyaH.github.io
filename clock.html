@@ -8,34 +8,54 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入一个具有科技感的字体 'Orbitron' -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 引入Tone.js用于在计时结束后播放提示音 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         /* 为整个页面设置科技感字体和文字辉光效果 */
         body {
             font-family: 'Orbitron', 'PingFang SC', 'Microsoft YaHei', sans-serif; /* 添加中文字体备选 */
             text-shadow: 0 0 10px rgba(100, 181, 246, 0.6), 0 0 20px rgba(100, 181, 246, 0.4);
-            /* 使用等宽数字，作为第一层保障 */
             font-variant-numeric: tabular-nums;
         }
         /* 时间分隔符的闪烁动画 */
         .separator {
             animation: blink 1s infinite;
         }
-        /* 调整透明度，使闪烁效果更温和 */
         @keyframes blink {
             50% {
                 opacity: 0.6;
             }
+        }
+        /* 学习工具按钮的样式 */
+        .control-btn {
+            background-color: transparent;
+            border: 1px solid #60a5fa; /* border-blue-400 */
+            color: #93c5fd; /* text-blue-300 */
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .control-btn:hover {
+            background-color: #60a5fa; /* hover:bg-blue-400 */
+            color: #111827; /* hover:text-gray-900 */
+        }
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        /* 番茄钟计时器的辉光效果 */
+        #pomodoro-display {
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.6), 0 0 20px rgba(74, 222, 128, 0.4);
         }
     </style>
 </head>
 <body class="bg-gray-900 text-blue-300 flex items-center justify-center min-h-screen select-none">
     <div class="text-center p-4">
         <!-- 日期和星期显示 -->
-        <div id="date" class="text-2xl md:text-4xl mb-4 opacity-80 transition-opacity duration-500"></div>
+        <div id="date" class="text-2xl md:text-4xl mb-4 opacity-80 transition-all duration-300"></div>
         
         <!-- 主要时钟显示区域 -->
         <div class="flex items-center justify-center text-7xl md:text-9xl font-bold tracking-widest">
-            <!-- 为每个时间单元（时、分、秒）设置固定宽度和居中对齐，彻底防止抖动 -->
             <span id="hours" class="inline-block text-center w-40 md:w-72">00</span>
             <span class="separator mx-2 md:mx-4">:</span>
             <span id="minutes" class="inline-block text-center w-40 md:w-72">00</span>
@@ -43,71 +63,149 @@
             <span id="seconds" class="inline-block text-center w-40 md:w-72">00</span>
         </div>
 
-        <!-- 温馨问候语将由一言API提供 -->
+        <!-- 一言句子 -->
         <div id="greeting" class="text-xl md:text-2xl mt-6 opacity-70 transition-opacity duration-500 min-h-[30px]"></div>
+
+        <!-- 新增：学习辅助工具 -->
+        <div id="study-tools" class="mt-8 space-y-4">
+            <!-- 番茄钟显示 -->
+            <div id="pomodoro-display" class="text-4xl text-green-400 font-bold tracking-widest h-10 transition-all duration-300"></div>
+            
+            <!-- 控制按钮 -->
+            <div class="space-x-4">
+                <button id="start-pomodoro-btn" class="control-btn">开始专注 (25分)</button>
+                <button id="reset-pomodoro-btn" class="control-btn">重置</button>
+                <button id="focus-mode-btn" class="control-btn">专注模式</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // 获取页面上的元素
+        // --- 元素获取 ---
         const hoursEl = document.getElementById('hours');
         const minutesEl = document.getElementById('minutes');
         const secondsEl = document.getElementById('seconds');
         const dateEl = document.getElementById('date');
         const greetingEl = document.getElementById('greeting');
+        const pomodoroDisplay = document.getElementById('pomodoro-display');
+        const startPomodoroBtn = document.getElementById('start-pomodoro-btn');
+        const resetPomodoroBtn = document.getElementById('reset-pomodoro-btn');
+        const focusModeBtn = document.getElementById('focus-mode-btn');
 
-        // --- 新增功能：从“一言”API获取句子 ---
+        // --- 变量定义 ---
+        let pomodoroInterval = null;
+        let timeLeft = 0; // 单位：秒
+        let isTimerRunning = false;
+        let currentMode = 'work'; // 'work' 或 'break'
+        let isFocusMode = false;
+
+        // --- 功能函数 ---
+
+        // (异步) 获取并设置“一言”句子
         async function fetchAndSetGreeting() {
             try {
-                // 向一言API发送请求
                 const response = await fetch('https://v1.hitokoto.cn/?encode=json&charset=utf-8');
-                if (!response.ok) {
-                    throw new Error('网络响应错误，无法获取一言。');
-                }
+                if (!response.ok) throw new Error('网络响应错误');
                 const data = await response.json();
-                
-                // 格式化句子并显示
                 const from = data.from_who || data.from || '佚名';
                 greetingEl.textContent = `${data.hitokoto} —— ${from}`;
-                greetingEl.style.opacity = '0.7';
-
             } catch (error) {
                 console.error('获取一言失败:', error);
-                // 如果API请求失败，显示一条备用句子
                 greetingEl.textContent = '生活，就是心怀最大的希望，尽最大的努力。';
             }
         }
 
-        // 更新时钟的函数
+        // 更新主时钟
         function updateClock() {
             const now = new Date();
-
-            // 格式化小时、分钟和秒，确保是两位数
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            // 更新时间显示
-            hoursEl.textContent = hours;
-            minutesEl.textContent = minutes;
-            secondsEl.textContent = seconds;
-
-            // 格式化日期和星期
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
+            hoursEl.textContent = String(now.getHours()).padStart(2, '0');
+            minutesEl.textContent = String(now.getMinutes()).padStart(2, '0');
+            secondsEl.textContent = String(now.getSeconds()).padStart(2, '0');
             const week = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][now.getDay()];
-            dateEl.textContent = `${year}年${month}月${day}日 ${week}`;
+            dateEl.textContent = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日 ${week}`;
         }
 
-        // --- 逻辑执行 ---
-        
-        // 1. 每秒更新一次时钟
+        // 更新番茄钟显示
+        function updatePomodoroDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            pomodoroDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // 开始番茄钟
+        function startTimer(minutes, mode) {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            startPomodoroBtn.disabled = true;
+            currentMode = mode;
+            timeLeft = minutes * 60;
+            updatePomodoroDisplay();
+            pomodoroInterval = setInterval(() => {
+                timeLeft--;
+                updatePomodoroDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(pomodoroInterval);
+                    isTimerRunning = false;
+                    startPomodoroBtn.disabled = false;
+                    
+                    // 使用Tone.js播放完成提示音
+                    try {
+                        const synth = new Tone.Synth().toDestination();
+                        synth.triggerAttackRelease("C5", "8n", Tone.now());
+                    } catch (e) {
+                        console.error("无法播放提示音", e);
+                    }
+
+                    if (currentMode === 'work') {
+                        pomodoroDisplay.textContent = "休息一下!";
+                        startPomodoroBtn.textContent = "开始休息 (5分)";
+                        currentMode = 'break';
+                    } else {
+                        pomodoroDisplay.textContent = "开始工作!";
+                        startPomodoroBtn.textContent = "开始专注 (25分)";
+                        currentMode = 'work';
+                    }
+                }
+            }, 1000);
+        }
+
+        // 重置番茄钟
+        function resetTimer() {
+            clearInterval(pomodoroInterval);
+            isTimerRunning = false;
+            startPomodoroBtn.disabled = false;
+            pomodoroDisplay.textContent = "";
+            startPomodoroBtn.textContent = "开始专注 (25分)";
+            currentMode = 'work';
+        }
+
+        // --- 事件监听 ---
+        startPomodoroBtn.addEventListener('click', () => {
+            if (currentMode === 'work') {
+                startTimer(25, 'work');
+            } else {
+                startTimer(5, 'break');
+            }
+        });
+
+        resetPomodoroBtn.addEventListener('click', resetTimer);
+
+        focusModeBtn.addEventListener('click', () => {
+            isFocusMode = !isFocusMode;
+            if (isFocusMode) {
+                dateEl.style.visibility = 'hidden';
+                greetingEl.style.visibility = 'hidden';
+                focusModeBtn.textContent = "退出专注";
+            } else {
+                dateEl.style.visibility = 'visible';
+                greetingEl.style.visibility = 'visible';
+                focusModeBtn.textContent = "专注模式";
+            }
+        });
+
+        // --- 初始化执行 ---
         setInterval(updateClock, 1000);
-
-        // 2. 每30秒获取一次新的“一言”句子
         setInterval(fetchAndSetGreeting, 30000);
-
-        // 3. 页面加载时立即执行一次，避免初始延迟
         updateClock();
         fetchAndSetGreeting();
     </script>
