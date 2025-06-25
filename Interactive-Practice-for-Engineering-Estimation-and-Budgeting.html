@@ -120,6 +120,13 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-8 text-sm text-gray-500">
+            <p>
+                <a href="index.html" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">© <span id="current-year"></span> IhyaH</a>
+            </p>
+        </footer>
     </div>
 
     <script>
@@ -525,19 +532,10 @@
         reviewWrongBtn.addEventListener('click', () => {
             initQuiz([...wrongAnswers]);
         });
+        
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
 
-    </script>
-
-    <!-- 页脚 -->
-    <footer class="bg-gray-800 text-gray-400 py-6 mt-8">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; <span id="year"></span> <a href="index.html" class="text-gray-400 hover:text-white transition duration-300">IhyaH.</a></p>
-        </div>
-    </footer>
-
-    <script>
-        // 设置当前年份
-        document.getElementById('year').textContent = new Date().getFullYear();
     </script>
 
 </body>

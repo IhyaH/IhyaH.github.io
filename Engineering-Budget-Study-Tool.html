@@ -109,6 +109,9 @@
         
         <footer class="text-center mt-6 text-sm text-slate-400">
             <p>先主动回忆，再看思维导图，最后核对答案，效果更佳。</p>
+            <p class="mt-2">
+                <a href="index.html" class="text-slate-500 hover:text-slate-700 transition-colors duration-200">© <span id="current-year"></span> IhyaH</a>
+            </p>
         </footer>
     </div>
 
@@ -280,19 +283,10 @@
 
             // Init
             displayQuestion();
+            
+            // Set current year in footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
         });
-    </script>
-
-    <!-- 页脚 -->
-    <footer class="bg-slate-800 text-slate-400 py-6 mt-8">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; <span id="year"></span> <a href="index.html" class="text-slate-400 hover:text-white transition duration-300">IhyaH.</a></p>
-        </div>
-    </footer>
-
-    <script>
-        // 设置当前年份
-        document.getElementById('year').textContent = new Date().getFullYear();
     </script>
 
 </body>

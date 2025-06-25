@@ -80,6 +80,13 @@
                 <button id="fullscreen-btn" class="control-btn w-48 md:w-auto">全屏模式</button>
             </div>
         </div>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-8 text-sm text-blue-400 opacity-60">
+            <p>
+                <a href="index.html" class="hover:text-blue-300 transition-colors duration-200">© <span id="current-year"></span> IhyaH</a>
+            </p>
+        </footer>
     </div>
 
     <script>
@@ -241,6 +248,9 @@
         setInterval(fetchAndSetGreeting, 30000);
         updateClock();
         fetchAndSetGreeting();
+        
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 
 </body>
