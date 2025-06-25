@@ -413,6 +413,7 @@
             if (isCorrect) {
                 correctCount++;
             } else {
+                wrongCount++;
                 // To avoid duplicates when re-testing wrong answers
                 if (!wrongAnswers.includes(question)) {
                    wrongAnswers.push(question);
