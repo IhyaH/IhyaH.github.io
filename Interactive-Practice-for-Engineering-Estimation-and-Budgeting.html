@@ -399,7 +399,6 @@
             if (isCorrect) {
                 correctCount++;
             } else {
-                wrongCount++;
                 wrongAnswers.push(question);
             }
             
@@ -435,24 +434,16 @@
             
             // Populate wrong questions list
             wrongQuestionsListEl.innerHTML = '<h3 class="text-xl font-bold mb-4 text-center">错题回顾</h3>';
-            if(wrongAnswers.length > 0) {
+            if (wrongAnswers.length > 0) {
                  wrongAnswers.forEach((q, index) => {
                     const item = document.createElement('div');
                     item.className = 'p-4 mb-2 border rounded-lg bg-red-50';
+                    // For multi-choice, join the letters. For single/judgement, it's a simple string.
                     let correctAnswerText = Array.isArray(q.answer) ? q.answer.join(', ') : q.answer;
-                    
-                    if (q.type !== '判断题') {
-                        const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
-                        const correctLetters = Array.isArray(q.answer) ? q.answer : [q.answer];
-                        correctAnswerText = correctLetters.map(letter => {
-                            const optionIndex = optionLetters.indexOf(letter);
-                            return q.options[optionIndex];
-                        }).join('<br>');
-                    }
 
                     item.innerHTML = `
                         <p class="font-semibold">${index + 1}. ${q.question.replace(/\uff08\s*\uff09/g, '(____)')}</p>
-                        <p class="text-green-700 mt-2"><strong>正确答案:</strong><br>${correctAnswerText}</p>
+                        <p class="text-green-700 mt-2"><strong>正确答案:</strong> ${correctAnswerText}</p>
                     `;
                     wrongQuestionsListEl.appendChild(item);
                 });
