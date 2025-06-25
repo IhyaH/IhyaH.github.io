@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Noto Sans SC', sans-serif;
-      6      -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent;
         }
         .option-btn {
             transition: all 0.2s ease-in-out;
@@ -258,6 +258,7 @@
         let wrongCount = 0;
         let wrongAnswers = [];
         let selectedAnswers = [];
+        let isAnswered = false;
 
         // --- Functions ---
         
@@ -307,8 +308,11 @@
                 showResults();
                 return;
             }
-
+            
+            isAnswered = false;
             confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '确认答案 <i class="fas fa-check ml-2"></i>';
+
             const question = questions[currentQuestionIndex];
             
             questionTypeEl.textContent = `【${question.type}】`;
@@ -324,7 +328,7 @@
                 
                 let optionText = option;
                 // For single/multi choice, remove the "A、" prefix
-                if (!isMulti && question.type !== '判断题') {
+                if (question.type !== '判断题') {
                      optionText = option.substring(3);
                 }
 
@@ -353,7 +357,6 @@
         }
 
         function checkAnswer() {
-            confirmBtn.disabled = true;
             const question = questions[currentQuestionIndex];
             const correctAnswers = Array.isArray(question.answer) ? question.answer : [question.answer];
             
@@ -401,12 +404,9 @@
             }
             
             updateStats();
-            
-            setTimeout(() => {
-                currentQuestionIndex++;
-                selectedAnswers = [];
-                displayQuestion();
-            }, 1500); // Wait 1.5 seconds before next question
+            isAnswered = true;
+            confirmBtn.innerHTML = '下一题 <i class="fas fa-arrow-right ml-2"></i>';
+            confirmBtn.disabled = false;
         }
 
         function updateStats() {
@@ -417,8 +417,8 @@
             accuracyEl.textContent = `${accuracy}%`;
             
             const totalQuestions = questions.length;
-            progressTextEl.textContent = `${currentQuestionIndex} / ${totalQuestions}`;
-            const progressPercentage = totalQuestions > 0 ? (currentQuestionIndex / totalQuestions) * 100 : 0;
+            progressTextEl.textContent = `${currentQuestionIndex + 1} / ${totalQuestions}`;
+            const progressPercentage = totalQuestions > 0 ? ((currentQuestionIndex + 1) / totalQuestions) * 100 : 0;
             progressBarEl.style.width = `${progressPercentage}%`;
         }
         
@@ -464,15 +464,23 @@
         
         // --- Event Listeners ---
         startBtn.addEventListener('click', () => initQuiz(questionsData));
-        confirmBtn.addEventListener('click', checkAnswer);
+        
+        confirmBtn.addEventListener('click', () => {
+            if (isAnswered) {
+                currentQuestionIndex++;
+                selectedAnswers = [];
+                displayQuestion();
+            } else {
+                checkAnswer();
+            }
+        });
+
         restartBtn.addEventListener('click', () => {
-             // When restarting all, we need to reset the original wrongAnswers array as well
              wrongAnswers = [];
              initQuiz(questionsData)
         });
+
         reviewWrongBtn.addEventListener('click', () => {
-            // When reviewing wrong answers, we pass a copy of the wrong answers to initQuiz
-            // This way, if the user restarts from the result screen again, the original full list of wrong answers is preserved
             initQuiz([...wrongAnswers])
         });
 
