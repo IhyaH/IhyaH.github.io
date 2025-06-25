@@ -29,6 +29,11 @@
              background-color: #e0f2fe;
              border-color: #38bdf8;
         }
+        .active-count-btn {
+            background-color: #3b82f6 !important; /* blue-500 */
+            color: white !important;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
@@ -36,7 +41,13 @@
         
         <div id="start-screen" class="text-center bg-white p-8 rounded-2xl shadow-lg">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">工程概预算练习</h1>
-            <p class="text-gray-600 mb-8">准备好开始测试了吗？</p>
+            <p class="text-gray-600 mb-6">请选择本次练习的题目数量：</p>
+            <div id="question-count-selector" class="flex justify-center flex-wrap gap-2 sm:gap-4 mb-8">
+                <button data-count="10" class="count-btn bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-full hover:bg-gray-300 transition-all">10 题</button>
+                <button data-count="20" class="count-btn bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-full hover:bg-gray-300 transition-all">20 题</button>
+                <button data-count="50" class="count-btn bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-full hover:bg-gray-300 transition-all">50 题</button>
+                <button data-count="all" class="count-btn active-count-btn bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-full hover:bg-gray-300 transition-all">全部</button>
+            </div>
             <button id="start-btn" class="bg-blue-500 text-white font-bold py-3 px-8 rounded-full hover:bg-blue-600 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
                 <i class="fas fa-play mr-2"></i>开始答题
             </button>
@@ -477,4 +488,4 @@
 
     </script>
 </body>
-</html>
+</ht
