@@ -1,246 +1,188 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数码管时钟</title>
-    <!-- 引入Tailwind CSS用于快速构建界面 -->
+    <title>IhyaH的个人主页</title>
+    <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入一个具有科技感的字体 'Orbitron' -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <!-- 引入Tone.js用于在计时结束后播放提示音 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <!-- 引入Google字体 "Inter" -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 引入Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 为整个页面设置科技感字体和文字辉光效果 */
+        /* 自定义样式 */
         body {
-            font-family: 'Orbitron', 'PingFang SC', 'Microsoft YaHei', sans-serif; /* 添加中文字体备选 */
-            text-shadow: 0 0 10px rgba(100, 181, 246, 0.6), 0 0 20px rgba(100, 181, 246, 0.4);
-            font-variant-numeric: tabular-nums;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* 使用柔和的灰色背景 */
         }
-        /* 时间分隔符的闪烁动画 */
-        .separator {
-            animation: blink 1s infinite;
+        /* 卡片悬浮效果 */
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        @keyframes blink {
-            50% {
-                opacity: 0.6;
-            }
+        /* 页面加载时的淡入动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
-        /* 学习工具按钮的样式 */
-        .control-btn {
-            background-color: transparent;
-            border: 1px solid #60a5fa; /* border-blue-400 */
-            color: #93c5fd; /* text-blue-300 */
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-            white-space: nowrap; /* 防止按钮文字换行 */
-        }
-        .control-btn:hover {
-            background-color: #60a5fa; /* hover:bg-blue-400 */
-            color: #111827; /* hover:text-gray-900 */
-        }
-        .control-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        /* 番茄钟计时器的辉光效果 */
-        #pomodoro-display {
-            text-shadow: 0 0 10px rgba(74, 222, 128, 0.6), 0 0 20px rgba(74, 222, 128, 0.4);
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
-<body class="bg-gray-900 text-blue-300 flex items-center justify-center min-h-screen select-none">
-    <div class="text-center p-4 w-full">
-        <!-- 日期和星期显示 (响应式字体) -->
-        <div id="date" class="text-xl md:text-2xl lg:text-3xl mb-4 opacity-80 transition-all duration-300"></div>
-        
-        <!-- 主要时钟显示区域 (响应式字体和宽度) -->
-        <div class="flex items-center justify-center text-6xl sm:text-7xl md:text-9xl font-bold tracking-widest">
-            <span id="hours" class="inline-block text-center w-28 sm:w-40 md:w-72">00</span>
-            <span class="separator mx-1 sm:mx-2 md:mx-4">:</span>
-            <span id="minutes" class="inline-block text-center w-28 sm:w-40 md:w-72">00</span>
-            <span class="separator mx-1 sm:mx-2 md:mx-4">:</span>
-            <span id="seconds" class="inline-block text-center w-28 sm:w-40 md:w-72">00</span>
-        </div>
+<body class="bg-slate-50 text-slate-800">
 
-        <!-- 一言句子 (响应式字体) -->
-        <div id="greeting" class="text-lg md:text-xl mt-6 opacity-70 transition-opacity duration-500 min-h-[50px] px-2"></div>
-
-        <!-- 学习辅助工具 -->
-        <div id="study-tools" class="mt-8 space-y-4">
-            <!-- 番茄钟显示 (响应式字体) -->
-            <div id="pomodoro-display" class="text-3xl md:text-4xl text-green-400 font-bold tracking-widest h-10 transition-all duration-300"></div>
-            
-            <!-- 控制按钮 (响应式布局) -->
-            <div class="flex flex-col items-center space-y-3 md:flex-row md:justify-center md:space-y-0 md:space-x-4">
-                <button id="start-pomodoro-btn" class="control-btn w-48 md:w-auto">开始专注 (25分)</button>
-                <button id="reset-pomodoro-btn" class="control-btn w-48 md:w-auto">重置</button>
-                <button id="focus-mode-btn" class="control-btn w-48 md:w-auto">专注模式</button>
-                <button id="fullscreen-btn" class="control-btn w-48 md:w-auto">全屏模式</button>
+    <!-- 导航栏 -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-slate-900">IhyaH</a>
+            <div class="hidden md:flex space-x-6">
+                <a href="#about" class="text-slate-600 hover:text-indigo-600 transition duration-300">关于我</a>
+                <a href="#projects" class="text-slate-600 hover:text-indigo-600 transition duration-300">我的项目</a>
+                <a href="#contact" class="text-slate-600 hover:text-indigo-600 transition duration-300">联系我</a>
             </div>
+            <a href="https://github.com/IhyaH" target="_blank" class="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-900 transition duration-300 flex items-center space-x-2">
+                <i class="fab fa-github"></i>
+                <span>GitHub</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- 主体内容 -->
+    <main class="container mx-auto px-6 py-12 md:py-20">
+
+        <!-- 英雄/介绍部分 -->
+        <section id="hero" class="text-center min-h-[60vh] flex flex-col justify-center items-center fade-in">
+            <img 
+                src="https://github.com/IhyaH.png" 
+                alt="IhyaH的头像" 
+                class="w-32 h-32 md:w-40 md:h-40 rounded-full mx-auto mb-6 shadow-xl border-4 border-white"
+                onerror="this.onerror=null;this.src='https://placehold.co/160x160/e2e8f0/334155?text=IhyaH';"
+            >
+            <h1 class="text-4xl md:text-6xl font-bold text-slate-900 mb-4">你好, 我是IhyaH</h1>
+            <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-8">
+                一名对技术充满热情的开发者，热衷于构建精美、实用的应用程序和开源项目。
+            </p>
+            <a href="#projects" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-indigo-700 transition duration-300 shadow-lg">
+                查看我的作品
+            </a>
+        </section>
+
+        <!-- 关于我 -->
+        <section id="about" class="py-20 md:py-32 fade-in">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">关于我</h2>
+                <div class="bg-white p-8 md:p-12 rounded-xl shadow-lg">
+                    <p class="text-slate-600 text-left md:text-lg leading-relaxed">
+                        我是一名充满创造力的开发者，对代码有着无限的热情。我专注于 <strong class="text-indigo-600">前端开发</strong> 和 <strong class="text-indigo-600">用户体验设计</strong>，但也涉足后端技术栈。我喜欢将复杂的想法转化为简洁、优雅且用户友好的解决方案。
+                        <br><br>
+                        在业余时间，我喜欢探索新的技术、为开源社区做贡献，并且享受在数字世界中创造新事物的过程。我相信持续学习是成长的关键。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 项目展示 -->
+        <section id="projects" class="py-20 md:py-32 bg-slate-100 -mx-6 px-6 fade-in">
+             <div class="container mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 text-center mb-12">我的项目</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- 项目卡片 1 (占位符) -->
+                    <div class="project-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                        <img src="https://placehold.co/600x400/312e81/ffffff?text=项目截图" alt="项目1截图" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-slate-900">很棒的项目</h3>
+                            <p class="text-slate-600 mb-4">这是一个关于项目的简短描述，说明了它的用途和使用的技术。</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-500">React / Node.js</span>
+                                <a href="#" class="text-indigo-600 hover:text-indigo-800 font-semibold">查看详情 &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 项目卡片 2 (占位符) -->
+                    <div class="project-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                        <img src="https://placehold.co/600x400/1e293b/ffffff?text=项目截图" alt="项目2截图" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-slate-900">配置文件</h3>
+                            <p class="text-slate-600 mb-4">我所有的配置文件和开发环境设置，旨在提高效率。</p>
+                             <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-500">Shell / Vim</span>
+                                <a href="#" class="text-indigo-600 hover:text-indigo-800 font-semibold">查看详情 &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 项目卡片 3 (占位符) -->
+                    <div class="project-card bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300">
+                        <img src="https://placehold.co/600x400/0f766e/ffffff?text=项目截图" alt="项目3截图" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-2 text-slate-900">个人网站 V1</h3>
+                            <p class="text-slate-600 mb-4">我的第一个个人网站，使用纯HTML和CSS构建，是一个很好的学习经历。</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-slate-500">HTML / CSS</span>
+                                <a href="#" class="text-indigo-600 hover:text-indigo-800 font-semibold">查看详情 &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+             </div>
+        </section>
+
+        <!-- 联系方式 -->
+        <section id="contact" class="py-20 md:py-32 text-center fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">与我联系</h2>
+            <p class="text-lg text-slate-600 max-w-xl mx-auto mb-8">
+                我总是在寻找新的挑战和合作机会。欢迎随时通过下面的链接与我联系。
+            </p>
+            <a href="https://github.com/IhyaH" target="_blank" class="bg-slate-800 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-slate-900 transition duration-300 shadow-lg inline-flex items-center space-x-2">
+                <i class="fab fa-github"></i>
+                <span>在 GitHub 上找到我</span>
+            </a>
+        </section>
+
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-slate-800 text-slate-400 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; <span id="year"></span> IhyaH. 版权所有。</p>
         </div>
-    </div>
+    </footer>
 
     <script>
-        // --- 元素获取 ---
-        const hoursEl = document.getElementById('hours');
-        const minutesEl = document.getElementById('minutes');
-        const secondsEl = document.getElementById('seconds');
-        const dateEl = document.getElementById('date');
-        const greetingEl = document.getElementById('greeting');
-        const pomodoroDisplay = document.getElementById('pomodoro-display');
-        const startPomodoroBtn = document.getElementById('start-pomodoro-btn');
-        const resetPomodoroBtn = document.getElementById('reset-pomodoro-btn');
-        const focusModeBtn = document.getElementById('focus-mode-btn');
-        const fullscreenBtn = document.getElementById('fullscreen-btn'); // 新增
+        // 设置当前年份
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-        // --- 变量定义 ---
-        let pomodoroInterval = null;
-        let timeLeft = 0; // 单位：秒
-        let isTimerRunning = false;
-        let currentMode = 'work'; // 'work' 或 'break'
-        let isFocusMode = false;
+        // 滚动时的淡入效果
+        const faders = document.querySelectorAll('.fade-in');
+        const appearOptions = {
+            threshold: 0.2, // 当元素20%可见时触发
+            rootMargin: "0px 0px -50px 0px" // 向上偏移50px
+        };
 
-        // --- 功能函数 ---
-
-        // (异步) 获取并设置“一言”句子
-        async function fetchAndSetGreeting() {
-            try {
-                const response = await fetch('https://v1.hitokoto.cn/?encode=json&charset=utf-8');
-                if (!response.ok) throw new Error('网络响应错误');
-                const data = await response.json();
-                const from = data.from_who || data.from || '佚名';
-                greetingEl.textContent = `${data.hitokoto} —— ${from}`;
-            } catch (error) {
-                console.error('获取一言失败:', error);
-                greetingEl.textContent = '生活，就是心怀最大的希望，尽最大的努力。';
-            }
-        }
-
-        // 更新主时钟
-        function updateClock() {
-            const now = new Date();
-            hoursEl.textContent = String(now.getHours()).padStart(2, '0');
-            minutesEl.textContent = String(now.getMinutes()).padStart(2, '0');
-            secondsEl.textContent = String(now.getSeconds()).padStart(2, '0');
-            const week = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][now.getDay()];
-            dateEl.textContent = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日 ${week}`;
-        }
-
-        // 更新番茄钟显示
-        function updatePomodoroDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            pomodoroDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-
-        // 开始番茄钟
-        function startTimer(minutes, mode) {
-            if (isTimerRunning) return;
-            isTimerRunning = true;
-            startPomodoroBtn.disabled = true;
-            currentMode = mode;
-            timeLeft = minutes * 60;
-            updatePomodoroDisplay();
-            pomodoroInterval = setInterval(() => {
-                timeLeft--;
-                updatePomodoroDisplay();
-                if (timeLeft <= 0) {
-                    clearInterval(pomodoroInterval);
-                    isTimerRunning = false;
-                    startPomodoroBtn.disabled = false;
-                    
-                    try {
-                        if (Tone.context.state !== 'running') { Tone.context.resume(); }
-                        const synth = new Tone.Synth().toDestination();
-                        synth.triggerAttackRelease("C5", "8n", Tone.now());
-                    } catch (e) {
-                        console.error("无法播放提示音", e);
-                    }
-
-                    if (currentMode === 'work') {
-                        pomodoroDisplay.textContent = "休息一下!";
-                        startPomodoroBtn.textContent = "开始休息 (5分)";
-                        currentMode = 'break';
-                    } else {
-                        pomodoroDisplay.textContent = "开始工作!";
-                        startPomodoroBtn.textContent = "开始专注 (25分)";
-                        currentMode = 'work';
-                    }
+        const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    return;
+                } else {
+                    entry.target.classList.add('visible');
+                    appearOnScroll.unobserve(entry.target);
                 }
-            }, 1000);
-        }
+            });
+        }, appearOptions);
 
-        // 重置番茄钟
-        function resetTimer() {
-            clearInterval(pomodoroInterval);
-            isTimerRunning = false;
-            startPomodoroBtn.disabled = false;
-            pomodoroDisplay.textContent = "";
-            startPomodoroBtn.textContent = "开始专注 (25分)";
-            currentMode = 'work';
-        }
-
-        // --- 新增：全屏切换功能 ---
-        function toggleFullScreen() {
-            if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-                const docEl = document.documentElement;
-                if (docEl.requestFullscreen) { docEl.requestFullscreen(); } 
-                else if (docEl.mozRequestFullScreen) { docEl.mozRequestFullScreen(); } // Firefox
-                else if (docEl.webkitRequestFullscreen) { docEl.webkitRequestFullscreen(); } // Chrome, Safari and Opera
-                else if (docEl.msRequestFullscreen) { docEl.msRequestFullscreen(); } // IE/Edge
-            } else {
-                if (document.exitFullscreen) { document.exitFullscreen(); }
-                else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); } // Firefox
-                else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } // Chrome, Safari and Opera
-                else if (document.msExitFullscreen) { document.msExitFullscreen(); } // IE/Edge
-            }
-        }
-        
-        function updateFullscreenButtonText() {
-            if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-                fullscreenBtn.textContent = "全屏模式";
-            } else {
-                fullscreenBtn.textContent = "退出全屏";
-            }
-        }
-
-        // --- 事件监听 ---
-        startPomodoroBtn.addEventListener('click', () => {
-            if (Tone.context.state !== 'running') { Tone.start(); }
-            if (currentMode === 'work') { startTimer(25, 'work'); } 
-            else { startTimer(5, 'break'); }
+        faders.forEach(fader => {
+            appearOnScroll.observe(fader);
         });
-
-        resetPomodoroBtn.addEventListener('click', resetTimer);
-
-        focusModeBtn.addEventListener('click', () => {
-            isFocusMode = !isFocusMode;
-            if (isFocusMode) {
-                dateEl.style.visibility = 'hidden';
-                greetingEl.style.visibility = 'hidden';
-                focusModeBtn.textContent = "退出专注";
-            } else {
-                dateEl.style.visibility = 'visible';
-                greetingEl.style.visibility = 'visible';
-                focusModeBtn.textContent = "专注模式";
-            }
-        });
-
-        fullscreenBtn.addEventListener('click', toggleFullScreen); // 新增
-        // 监听全屏状态变化，以正确更新按钮文字（例如用户按ESC键退出）
-        document.addEventListener('fullscreenchange', updateFullscreenButtonText);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenButtonText);
-        document.addEventListener('mozfullscreenchange', updateFullscreenButtonText);
-        document.addEventListener('MSFullscreenChange', updateFullscreenButtonText);
-
-
-        // --- 初始化执行 ---
-        setInterval(updateClock, 1000);
-        setInterval(fetchAndSetGreeting, 30000);
-        updateClock();
-        fetchAndSetGreeting();
     </script>
 </body>
 </html>
