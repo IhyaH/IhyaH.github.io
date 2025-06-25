@@ -1,14 +1,21 @@
-<header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+<header class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-50 transition-colors duration-300">
     <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <a href="index.html" class="text-2xl font-bold text-slate-900">IhyaH</a>
+        <a href="index.html" class="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-300">IhyaH</a>
         <div class="hidden md:flex space-x-6">
-            <a href="index.html#about">关于我</a>
-            <a href="index.html#projects">我的项目</a>
-            <a href="index.html#contact">联系我</a>
+            <a href="index.html#about" class="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors duration-300">关于我</a>
+            <a href="index.html#projects" class="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors duration-300">我的项目</a>
+            <a href="index.html#contact" class="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-colors duration-300">联系我</a>
         </div>
-        <a href="https://github.com/IhyaH" target="_blank" class="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-900 transition duration-300 flex items-center space-x-2">
-            <i class="fab fa-github"></i>
-            <span>GitHub</span>
-        </a>
+        <div class="flex items-center space-x-4">
+            <!-- 暗色模式切换按钮 -->
+            <button id="theme-toggle" class="theme-toggle" aria-label="切换暗色模式">
+                <i class="fas fa-sun theme-toggle-icon sun-icon"></i>
+                <i class="fas fa-moon theme-toggle-icon moon-icon"></i>
+            </button>
+            <a href="https://github.com/IhyaH" target="_blank" class="bg-slate-800 dark:bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-900 dark:hover:bg-slate-600 transition duration-300 flex items-center space-x-2">
+                <i class="fab fa-github"></i>
+                <span>GitHub</span>
+            </a>
+        </div>
     </nav>
 </header>
