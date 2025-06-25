@@ -34,6 +34,7 @@
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             transition: all 0.3s ease;
+            white-space: nowrap; /* 防止按钮文字换行 */
         }
         .control-btn:hover {
             background-color: #60a5fa; /* hover:bg-blue-400 */
@@ -50,32 +51,32 @@
     </style>
 </head>
 <body class="bg-gray-900 text-blue-300 flex items-center justify-center min-h-screen select-none">
-    <div class="text-center p-4">
-        <!-- 日期和星期显示 -->
-        <div id="date" class="text-2xl md:text-4xl mb-4 opacity-80 transition-all duration-300"></div>
+    <div class="text-center p-4 w-full">
+        <!-- 日期和星期显示 (响应式字体) -->
+        <div id="date" class="text-xl md:text-2xl lg:text-3xl mb-4 opacity-80 transition-all duration-300"></div>
         
-        <!-- 主要时钟显示区域 -->
-        <div class="flex items-center justify-center text-7xl md:text-9xl font-bold tracking-widest">
-            <span id="hours" class="inline-block text-center w-40 md:w-72">00</span>
-            <span class="separator mx-2 md:mx-4">:</span>
-            <span id="minutes" class="inline-block text-center w-40 md:w-72">00</span>
-            <span class="separator mx-2 md:mx-4">:</span>
-            <span id="seconds" class="inline-block text-center w-40 md:w-72">00</span>
+        <!-- 主要时钟显示区域 (响应式字体和宽度) -->
+        <div class="flex items-center justify-center text-6xl sm:text-7xl md:text-9xl font-bold tracking-widest">
+            <span id="hours" class="inline-block text-center w-28 sm:w-40 md:w-72">00</span>
+            <span class="separator mx-1 sm:mx-2 md:mx-4">:</span>
+            <span id="minutes" class="inline-block text-center w-28 sm:w-40 md:w-72">00</span>
+            <span class="separator mx-1 sm:mx-2 md:mx-4">:</span>
+            <span id="seconds" class="inline-block text-center w-28 sm:w-40 md:w-72">00</span>
         </div>
 
-        <!-- 一言句子 -->
-        <div id="greeting" class="text-xl md:text-2xl mt-6 opacity-70 transition-opacity duration-500 min-h-[30px]"></div>
+        <!-- 一言句子 (响应式字体) -->
+        <div id="greeting" class="text-lg md:text-xl mt-6 opacity-70 transition-opacity duration-500 min-h-[50px] px-2"></div>
 
-        <!-- 新增：学习辅助工具 -->
+        <!-- 学习辅助工具 -->
         <div id="study-tools" class="mt-8 space-y-4">
-            <!-- 番茄钟显示 -->
-            <div id="pomodoro-display" class="text-4xl text-green-400 font-bold tracking-widest h-10 transition-all duration-300"></div>
+            <!-- 番茄钟显示 (响应式字体) -->
+            <div id="pomodoro-display" class="text-3xl md:text-4xl text-green-400 font-bold tracking-widest h-10 transition-all duration-300"></div>
             
-            <!-- 控制按钮 -->
-            <div class="space-x-4">
-                <button id="start-pomodoro-btn" class="control-btn">开始专注 (25分)</button>
-                <button id="reset-pomodoro-btn" class="control-btn">重置</button>
-                <button id="focus-mode-btn" class="control-btn">专注模式</button>
+            <!-- 控制按钮 (响应式布局) -->
+            <div class="flex flex-col items-center space-y-3 md:flex-row md:justify-center md:space-y-0 md:space-x-4">
+                <button id="start-pomodoro-btn" class="control-btn w-48 md:w-auto">开始专注 (25分)</button>
+                <button id="reset-pomodoro-btn" class="control-btn w-48 md:w-auto">重置</button>
+                <button id="focus-mode-btn" class="control-btn w-48 md:w-auto">专注模式</button>
             </div>
         </div>
     </div>
@@ -150,6 +151,10 @@
                     
                     // 使用Tone.js播放完成提示音
                     try {
+                        // 在用户交互后启动音频上下文
+                        if (Tone.context.state !== 'running') {
+                           Tone.context.resume();
+                        }
                         const synth = new Tone.Synth().toDestination();
                         synth.triggerAttackRelease("C5", "8n", Tone.now());
                     } catch (e) {
@@ -181,6 +186,10 @@
 
         // --- 事件监听 ---
         startPomodoroBtn.addEventListener('click', () => {
+             // 确保音频上下文已启动
+            if (Tone.context.state !== 'running') {
+                Tone.start();
+            }
             if (currentMode === 'work') {
                 startTimer(25, 'work');
             } else {
