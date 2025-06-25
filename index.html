@@ -37,21 +37,8 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <!-- 导航栏 -->
-    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-slate-900">IhyaH</a>
-            <div class="hidden md:flex space-x-6">
-                <a href="#about" class="text-slate-600 hover:text-indigo-600 transition duration-300">关于我</a>
-                <a href="#projects" class="text-slate-600 hover:text-indigo-600 transition duration-300">我的项目</a>
-                <a href="#contact" class="text-slate-600 hover:text-indigo-600 transition duration-300">联系我</a>
-            </div>
-            <a href="https://github.com/IhyaH" target="_blank" class="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-900 transition duration-300 flex items-center space-x-2">
-                <i class="fab fa-github"></i>
-                <span>GitHub</span>
-            </a>
-        </nav>
-    </header>
+    <!-- 导航容器 (动态加载导航组件) -->
+    <div id="navbar-container"></div>
 
     <!-- 主体内容 -->
     <main class="container mx-auto px-6 py-12 md:py-20">
@@ -159,6 +146,27 @@
     </footer>
 
     <script>
+        // 动态加载导航组件
+        fetch('components/navbar.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('navbar-container').innerHTML = html;
+            });
+
+        // 跨页面锚点支持
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash;
+            if (hash) {
+                // 等待导航加载完成
+                setTimeout(() => {
+                    const target = document.querySelector(hash);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 300);
+            }
+        });
+
         // 设置当前年份
         document.getElementById('year').textContent = new Date().getFullYear();
 
