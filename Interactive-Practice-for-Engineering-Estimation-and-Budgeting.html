@@ -112,7 +112,7 @@
                         <i class="fas fa-book-open mr-2"></i>重练错题
                     </button>
                     <button id="restart-btn" class="w-full bg-gray-700 text-white font-bold py-3 px-6 rounded-full hover:bg-gray-800 transition-transform transform hover:scale-105">
-                        <i class="fas fa-redo mr-2"></i>全部重练
+                        <i class="fas fa-home mr-2"></i>返回首页
                     </button>
                 </div>
                  <div id="wrong-questions-list" class="mt-8 text-left hidden">
@@ -247,6 +247,7 @@
         const reviewWrongBtn = document.getElementById('review-wrong-btn');
         const questionCard = document.getElementById('question-card');
         const resultScreen = document.getElementById('result-screen');
+        const questionCountSelector = document.getElementById('question-count-selector');
         
         const correctCountEl = document.getElementById('correct-count');
         const wrongCountEl = document.getElementById('wrong-count');
@@ -270,6 +271,7 @@
         let wrongAnswers = [];
         let selectedAnswers = [];
         let isAnswered = false;
+        let selectedQuestionCount = 'all';
 
         // --- Functions ---
         
@@ -287,6 +289,7 @@
             currentQuestionIndex = 0;
             correctCount = 0;
             wrongCount = 0;
+            // Only reset wrongAnswers array when starting a completely new quiz from the main pool
             if (questionSet === questionsData) {
                  wrongAnswers = [];
             }
@@ -410,7 +413,10 @@
             if (isCorrect) {
                 correctCount++;
             } else {
-                wrongAnswers.push(question);
+                // To avoid duplicates when re-testing wrong answers
+                if (!wrongAnswers.includes(question)) {
+                   wrongAnswers.push(question);
+                }
             }
             
             updateStats();
@@ -449,7 +455,6 @@
                  wrongAnswers.forEach((q, index) => {
                     const item = document.createElement('div');
                     item.className = 'p-4 mb-2 border rounded-lg bg-red-50';
-                    // For multi-choice, join the letters. For single/judgement, it's a simple string.
                     let correctAnswerText = Array.isArray(q.answer) ? q.answer.join(', ') : q.answer;
 
                     item.innerHTML = `
@@ -465,7 +470,28 @@
         }
         
         // --- Event Listeners ---
-        startBtn.addEventListener('click', () => initQuiz(questionsData));
+        questionCountSelector.addEventListener('click', (e) => {
+            if (e.target.classList.contains('count-btn')) {
+                questionCountSelector.querySelectorAll('.count-btn').forEach(btn => {
+                    btn.classList.remove('active-count-btn');
+                });
+                e.target.classList.add('active-count-btn');
+                selectedQuestionCount = e.target.dataset.count;
+            }
+        });
+
+        startBtn.addEventListener('click', () => {
+            let questionSet;
+            const fullQuestionSet = [...questionsData];
+
+            if (selectedQuestionCount === 'all') {
+                questionSet = fullQuestionSet;
+            } else {
+                const count = parseInt(selectedQuestionCount, 10);
+                questionSet = shuffleArray(fullQuestionSet).slice(0, count);
+            }
+            initQuiz(questionSet);
+        });
         
         confirmBtn.addEventListener('click', () => {
             if (isAnswered) {
@@ -478,14 +504,15 @@
         });
 
         restartBtn.addEventListener('click', () => {
-             wrongAnswers = [];
-             initQuiz(questionsData)
+            quizContainer.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
         });
 
         reviewWrongBtn.addEventListener('click', () => {
-            initQuiz([...wrongAnswers])
+            initQuiz([...wrongAnswers]);
         });
 
     </script>
 </body>
-</ht
+</html>
