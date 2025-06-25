@@ -77,7 +77,6 @@
                 <button id="start-pomodoro-btn" class="control-btn w-48 md:w-auto">开始专注 (25分)</button>
                 <button id="reset-pomodoro-btn" class="control-btn w-48 md:w-auto">重置</button>
                 <button id="focus-mode-btn" class="control-btn w-48 md:w-auto">专注模式</button>
-                <button id="fullscreen-btn" class="control-btn w-48 md:w-auto">全屏模式</button>
             </div>
         </div>
     </div>
@@ -93,7 +92,6 @@
         const startPomodoroBtn = document.getElementById('start-pomodoro-btn');
         const resetPomodoroBtn = document.getElementById('reset-pomodoro-btn');
         const focusModeBtn = document.getElementById('focus-mode-btn');
-        const fullscreenBtn = document.getElementById('fullscreen-btn'); // 新增
 
         // --- 变量定义 ---
         let pomodoroInterval = null;
@@ -151,8 +149,12 @@
                     isTimerRunning = false;
                     startPomodoroBtn.disabled = false;
                     
+                    // 使用Tone.js播放完成提示音
                     try {
-                        if (Tone.context.state !== 'running') { Tone.context.resume(); }
+                        // 在用户交互后启动音频上下文
+                        if (Tone.context.state !== 'running') {
+                           Tone.context.resume();
+                        }
                         const synth = new Tone.Synth().toDestination();
                         synth.triggerAttackRelease("C5", "8n", Tone.now());
                     } catch (e) {
@@ -182,35 +184,17 @@
             currentMode = 'work';
         }
 
-        // --- 新增：全屏切换功能 ---
-        function toggleFullScreen() {
-            if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-                const docEl = document.documentElement;
-                if (docEl.requestFullscreen) { docEl.requestFullscreen(); } 
-                else if (docEl.mozRequestFullScreen) { docEl.mozRequestFullScreen(); } // Firefox
-                else if (docEl.webkitRequestFullscreen) { docEl.webkitRequestFullscreen(); } // Chrome, Safari and Opera
-                else if (docEl.msRequestFullscreen) { docEl.msRequestFullscreen(); } // IE/Edge
-            } else {
-                if (document.exitFullscreen) { document.exitFullscreen(); }
-                else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); } // Firefox
-                else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } // Chrome, Safari and Opera
-                else if (document.msExitFullscreen) { document.msExitFullscreen(); } // IE/Edge
-            }
-        }
-        
-        function updateFullscreenButtonText() {
-            if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-                fullscreenBtn.textContent = "全屏模式";
-            } else {
-                fullscreenBtn.textContent = "退出全屏";
-            }
-        }
-
         // --- 事件监听 ---
         startPomodoroBtn.addEventListener('click', () => {
-            if (Tone.context.state !== 'running') { Tone.start(); }
-            if (currentMode === 'work') { startTimer(25, 'work'); } 
-            else { startTimer(5, 'break'); }
+             // 确保音频上下文已启动
+            if (Tone.context.state !== 'running') {
+                Tone.start();
+            }
+            if (currentMode === 'work') {
+                startTimer(25, 'work');
+            } else {
+                startTimer(5, 'break');
+            }
         });
 
         resetPomodoroBtn.addEventListener('click', resetTimer);
@@ -227,14 +211,6 @@
                 focusModeBtn.textContent = "专注模式";
             }
         });
-
-        fullscreenBtn.addEventListener('click', toggleFullScreen); // 新增
-        // 监听全屏状态变化，以正确更新按钮文字（例如用户按ESC键退出）
-        document.addEventListener('fullscreenchange', updateFullscreenButtonText);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenButtonText);
-        document.addEventListener('mozfullscreenchange', updateFullscreenButtonText);
-        document.addEventListener('MSFullscreenChange', updateFullscreenButtonText);
-
 
         // --- 初始化执行 ---
         setInterval(updateClock, 1000);
