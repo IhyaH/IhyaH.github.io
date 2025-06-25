@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>工程概预算 - 简答题记忆工具</title>
+    <title>工程概预算 - 简答题记忆工具 (含思维导图)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
             background-color: #f0f4f8;
             color: #1e293b;
         }
@@ -51,11 +51,18 @@
         .btn-outline:hover {
             background-color: #eff6ff;
         }
-        
-        #answer-container {
+        .content-container {
             border-top: 1px dashed #cbd5e1;
             padding-top: 16px;
             margin-top: 16px;
+        }
+        #mindmap-container pre {
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 12px;
+            color: #475569;
+            line-height: 1.8;
+            border: 1px solid #e2e8f0;
         }
     </style>
 </head>
@@ -64,7 +71,7 @@
     <div class="container mx-auto p-4 max-w-2xl">
         <header class="text-center mb-6">
             <h1 class="text-3xl font-bold text-slate-800">工程概预算简答题记忆工具</h1>
-            <p class="text-slate-500 mt-2">使用主动回忆法，高效记忆核心考点</p>
+            <p class="text-slate-500 mt-2">结合思维导图，高效记忆核心考点</p>
         </header>
 
         <div id="app" class="card p-6 md:p-8">
@@ -79,15 +86,20 @@
             <div id="question-container" class="mb-4">
                 <p class="text-lg font-semibold text-slate-700 leading-relaxed" id="question-text"></p>
             </div>
+            
+            <div id="mindmap-container" class="content-container hidden">
+                <h3 class="text-base font-bold text-amber-600 mb-2">提示 (思维导图)：</h3>
+                <pre id="mindmap-text"></pre>
+            </div>
 
-            <div id="answer-container" class="hidden">
+            <div id="answer-container" class="content-container hidden">
                 <h3 class="text-base font-bold text-blue-600 mb-2">参考答案：</h3>
                 <p class="text-slate-600 leading-relaxed whitespace-pre-line" id="answer-text"></p>
             </div>
 
-            <div class="mt-6 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                <button id="toggle-answer-btn" class="btn btn-primary flex-1">显示答案</button>
-                <button id="next-question-btn" class="btn btn-secondary flex-1">下一题</button>
+            <div id="action-buttons" class="mt-6 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                <button id="show-mindmap-btn" class="btn btn-primary bg-amber-500 hover:bg-amber-600 flex-1">显示提示 (思维导图)</button>
+                <button id="show-answer-btn" class="btn btn-primary flex-1">显示完整答案</button>
             </div>
              <div id="feedback-buttons" class="mt-4 flex space-x-4 hidden">
                 <button id="remembered-btn" class="btn bg-green-500 hover:bg-green-600 text-white flex-1">我记住了</button>
@@ -96,92 +108,96 @@
         </div>
         
         <footer class="text-center mt-6 text-sm text-slate-400">
-            <p>点击“显示答案”进行主动回忆，效果更佳。</p>
+            <p>先主动回忆，再看思维导图，最后核对答案，效果更佳。</p>
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 从文档中提取的简答题数据
             const questions = [
                 {
                     question: "1. 什么是利润？安装工程利润计算基础是什么？",
-                    answer: "利润是指建筑安装施工企业完成所承包工程而获得的盈利。\n利润 = 人工费 x 规定费率。\n安装工程利润计算基础是人工费。"
+                    answer: "利润是指建筑安装施工企业完成所承包工程而获得的盈利。\n利润 = 人工费 x 规定费率。\n安装工程利润计算基础是人工费。",
+                    mindmap: `利润\n ├─ 定义: 施工企业获得的盈利\n └─ 计算\n    ├─ 公式: 人工费 × 规定费率\n    └─ 基础: 人工费`
                 },
                 {
                     question: "2. 什么是直接工程费？包括哪些内容？如何计算？",
-                    answer: "直接工程费是指施工过程中直接耗费的构成建筑安装工程实体的建设费用。\n包括人工费、材料费和施工机械使用费。\n直接工程费又称为定额直接费。"
+                    answer: "直接工程费是指施工过程中直接耗费的构成建筑安装工程实体的建设费用。\n包括人工费、材料费和施工机械使用费。\n直接工程费又称为定额直接费。",
+                    mindmap: `直接工程费 (别名:定额直接费)\n ├─ 定义: 构成工程实体的直接耗费\n └─ 内容\n    ├─ 人工费\n    ├─ 材料费\n    └─ 施工机械使用费`
                 },
                 {
                     question: "3. 工程定额是如何分类的？定额有哪些性质？",
-                    answer: "工程定额按生产要素、编制程序及用途、专业和费用性质以及执行范围等因素，可将定额划分为 4 大类。\n定额具有以下性质：\n1) 定额具有科学性和群众性。\n2) 定额具有法令性和有限灵活性。\n3) 定额具有先进性和合理性。\n4) 定额具有稳定性和时效性。"
+                    answer: "工程定额按生产要素、编制程序及用途、专业和费用性质以及执行范围等因素，可将定额划分为 4 大类。\n定额具有以下性质：\n1) 定额具有科学性和群众性。\n2) 定额具有法令性和有限灵活性。\n3) 定额具有先进性和合理性。\n4) 定额具有稳定性和时效性。",
+                    mindmap: `工程定额\n ├─ 分类: 4大类 (按生产要素、用途等)\n └─ 性质\n    ├─ ① 科学性 & 群众性\n    ├─ ② 法令性 & 有限灵活性\n    ├─ ③ 先进性 & 合理性\n    └─ ④ 稳定性 & 时效性`
                 },
                 {
                     question: "4. 企业定额有什么作用？",
-                    answer: "1) 企业定额是企业计划管理的依据。\n2) 企业定额是对工程项目成本分析、核算、调控、资金运用的依据。\n3) 企业定额是组织和指挥施工生产的有效工具。\n4) 企业定额是激励员工工作积极性、计算劳动报酬的依据。\n5) 企业定额是施工企业走向市场参与竞争、编制投标报价的基础和主要依据。"
+                    answer: "1) 企业定额是企业计划管理的依据。\n2) 企业定额是对工程项目成本分析、核算、调控、资金运用的依据。\n3) 企业定额是组织和指挥施工生产的有效工具。\n4) 企业定额是激励员工工作积极性、计算劳动报酬的依据。\n5) 企业定额是施工企业走向市场参与竞争、编制投标报价的基础和主要依据。",
+                    mindmap: `企业定额的作用\n ├─ 对内管理\n │  ├─ 计划管理依据\n │  ├─ 成本核算依据\n │  ├─ 组织生产工具\n │  └─ 计算报酬依据\n └─ 对外竞争\n    └─ 投标报价基础`
                 },
                 {
                     question: "5. 为什么要制定建筑电气安装工程设备和材料预算价格？",
-                    answer: "制定建筑电气安装工程设备和材料预算价格的根本目的在于：通过提供统一、规范、贴近市场行情的计价基准，确保设备和材料费用计算的准确性、合理性和可比性。\n这既是工程投资精准控制、预算审查工作顺利进行的前提，也是统计分析地区投资数据的客观需要，最终都是为了科学、合理地确定和管理建设工程造价。"
+                    answer: "制定建筑电气安装工程设备和材料预算价格的根本目的在于：通过提供统一、规范、贴近市场行情的计价基准，确保设备和材料费用计算的准确性、合理性和可比性。\n这既是工程投资精准控制、预算审查工作顺利进行的前提，也是统计分析地区投资数据的客观需要，最终都是为了科学、合理地确定和管理建设工程造价。",
+                    mindmap: `制定设备材料预算价格的目的\n └─ 根本目的: 提供统一、规范、贴近市场的计价基准\n    ├─ 作用①: 确保费用计算的准确、合理、可比\n    ├─ 作用②: 实现工程投资精准控制\n    ├─ 作用③: 保障预算审查顺利进行\n    └─ 最终目标: 科学合理地确定和管理工程造价`
                 },
                 {
                     question: "6. 什么是材料差价？产生的材料差价有哪几种？",
-                    answer: "材料差价是指预算定额基价所依据的材料预算价格与电气安装工程所在地的现行材料预算价格间的差异。\n材料差价主要包括地区差价和时间差价。"
+                    answer: "材料差价是指预算定额基价所依据的材料预算价格与电气安装工程所在地的现行材料预算价格间的差异。\n材料差价主要包括地区差价和时间差价。",
+                    mindmap: `材料差价\n ├─ 定义: 预算价与现行价的差异\n └─ 种类\n    ├─ 地区差价 (空间维度)\n    └─ 时间差价 (时间维度)`
                 },
                 {
                     question: "7. 定额未包括的主要材料如何处理？",
-                    answer: "凡是定额单价中未包括主材费的，在该分项工程项目下面应补上主材费的费用，定额直接费表中的安装费加上材料费，才是该安装项目的全部费用。"
+                    answer: "凡是定额单价中未包括主材费的，在该分项工程项目下面应补上主材费的费用，定额直接费表中的安装费加上材料费，才是该安装项目的全部费用。",
+                    mindmap: `处理定额未包括的主材\n └─ 方法: 补充主材费\n    └─ 计算: 安装费 + 材料费 = 项目全部费用`
                 },
                 {
                     question: "8. 什么是工程量清单计价？什么是综合单价？",
-                    answer: "工程量清单计价是指投标人完成由招标人提供的工程量清单所列项目的全部费用，包括分部分项工程费、措施项目费、其他项目费、规费和税金。\n综合单价包括人工费、材料费、机械使用费、管理费、利润，并考虑风险因素。"
+                    answer: "工程量清单计价是指投标人完成由招标人提供的工程量清单所列项目的全部费用，包括分部分项工程费、措施项目费、其他项目费、规费和税金。\n综合单价包括人工费、材料费、机械使用费、管理费、利润，并考虑风险因素。",
+                    mindmap: `清单计价核心概念\n ├─ 工程量清单计价\n │  └─ 定义: 完成清单项目的全部费用\n │     └─ 包含: 分部分项、措施、其他、规费、税金\n └─ 综合单价\n    └─ 定义: 完成一个单位清单项目的价格\n       └─ 包含: 人、材、机、管理、利润、风险`
                 },
                 {
                     question: "9. 工程量清单的总说明应包含哪些内容？",
-                    answer: "工程量清单总说明，一般应按下列内容填写:\n1) 工程概况。\n2) 工程招标发包分包范围。\n3) 工程量清单编制依据。\n4) 工程质量、材料、施工等的特殊要求。\n5) 招标人自行采购材料的名称、规格型号、数量等。\n6) 其他项目清单中招标人部分的(包括预留金、自行采购材料费等)金额数量。\n7) 其他需要说明的问题。"
+                    answer: "工程量清单总说明，一般应按下列内容填写:\n1) 工程概况。\n2) 工程招标发包分包范围。\n3) 工程量清单编制依据。\n4) 工程质量、材料、施工等的特殊要求。\n5) 招标人自行采购材料的名称、规格型号、数量等。\n6) 其他项目清单中招标人部分的(包括预留金、自行采购材料费等)金额数量。\n7) 其他需要说明的问题。",
+                    mindmap: `工程量清单总说明内容\n ├─ 1. 工程概况\n ├─ 2. 招标范围\n ├─ 3. 编制依据\n ├─ 4. 特殊要求 (质量、材料等)\n ├─ 5. 招标人采购材料说明\n ├─ 6. 招标人部分金额说明\n └─ 7. 其他问题`
                 },
                 {
                     question: "10. 工程量清单计价费用组成内容是什么？",
-                    answer: "工程量清单内容主要包括工程量清单总说明和工程量清单表两大部分。\n其具体内容有:\n① 工程量清单封面;\n② 工程量清单填表须知;\n③ 工程量清单总说明;\n④ 分部分项工程量清单;\n⑤ 措施项目清单:\n⑥ 其他项目清单;\n⑦ 规费项目清单;\n⑧ 税金项目清单;\n⑨ 零星工作项目表以及主要材料价格表等。"
+                    answer: "工程量清单内容主要包括工程量清单总说明和工程量清单表两大部分。\n其具体内容有:\n① 工程量清单封面;\n② 工程量清单填表须知;\n③ 工程量清单总说明;\n④ 分部分项工程量清单;\n⑤ 措施项目清单:\n⑥ 其他项目清单;\n⑦ 规费项目清单;\n⑧ 税金项目清单;\n⑨ 零星工作项目表以及主要材料价格表等。",
+                    mindmap: `工程量清单计价的组成\n ├─ 两大部分\n │  ├─ 工程量清单总说明\n │  └─ 工程量清单表\n └─ 具体内容 (清单表)\n    ├─ ① 封面 & ② 填表须知\n    ├─ ③ 总说明\n    ├─ ④ 分部分项清单\n    ├─ ⑤ 措施项目清单\n    ├─ ⑥ 其他项目清单\n    ├─ ⑦ 规费清单 & ⑧ 税金清单\n    └─ ⑨ 零星工作表 & 主要材料价格表`
                 }
             ];
 
-            // 获取DOM元素
             const questionText = document.getElementById('question-text');
             const answerText = document.getElementById('answer-text');
+            const mindmapText = document.getElementById('mindmap-text');
             const answerContainer = document.getElementById('answer-container');
+            const mindmapContainer = document.getElementById('mindmap-container');
             const progressIndicator = document.getElementById('progress-indicator');
-            const toggleAnswerBtn = document.getElementById('toggle-answer-btn');
-            const nextQuestionBtn = document.getElementById('next-question-btn');
+            const showMindmapBtn = document.getElementById('show-mindmap-btn');
+            const showAnswerBtn = document.getElementById('show-answer-btn');
+            const actionButtons = document.getElementById('action-buttons');
             const reviewMistakesBtn = document.getElementById('review-mistakes-btn');
             const resetBtn = document.getElementById('reset-btn');
             const feedbackButtons = document.getElementById('feedback-buttons');
             const rememberedBtn = document.getElementById('remembered-btn');
             const forgotBtn = document.getElementById('forgot-btn');
 
-            // 状态变量
             let currentQuestionIndex = 0;
             let currentQuestionList = [...questions];
-            let mistakeList = []; // 错题集
+            let mistakeList = [];
             let isReviewMode = false;
 
-            // 初始化
-            displayQuestion();
-
-            // 显示问题
             function displayQuestion() {
                 if (currentQuestionList.length === 0) {
                     questionText.textContent = isReviewMode ? "恭喜！错题都复习完啦！" : "恭喜！所有题目都过了一遍！";
                     answerContainer.classList.add('hidden');
+                    mindmapContainer.classList.add('hidden');
                     progressIndicator.textContent = "已完成";
-                    // 隐藏所有操作按钮
-                    toggleAnswerBtn.classList.add('hidden');
-                    nextQuestionBtn.classList.add('hidden');
+                    actionButtons.classList.add('hidden');
                     feedbackButtons.classList.add('hidden');
                     return;
                 }
-                
-                // 确保索引在列表范围内
+
                 if(currentQuestionIndex >= currentQuestionList.length) {
                     currentQuestionIndex = 0;
                 }
@@ -189,44 +205,43 @@
                 const question = currentQuestionList[currentQuestionIndex];
                 questionText.textContent = question.question;
                 answerText.textContent = question.answer;
+                mindmapText.textContent = question.mindmap;
                 
-                // 重置UI
+                // Reset UI
                 answerContainer.classList.add('hidden');
-                toggleAnswerBtn.textContent = '显示答案';
-                toggleAnswerBtn.classList.remove('hidden');
-                nextQuestionBtn.classList.remove('hidden');
+                mindmapContainer.classList.add('hidden');
+                actionButtons.classList.remove('hidden');
+                showMindmapBtn.classList.remove('hidden');
+                showAnswerBtn.classList.remove('hidden');
                 feedbackButtons.classList.add('hidden');
 
-                // 更新进度
                 progressIndicator.textContent = `${isReviewMode ? '错题 ' : ''}第 ${currentQuestionIndex + 1} / ${currentQuestionList.length} 题`;
             }
+
+            function showMindmap() {
+                if (currentQuestionList.length === 0) return;
+                mindmapContainer.classList.remove('hidden');
+                showMindmapBtn.classList.add('hidden');
+            }
             
-            // 切换答案显示
-            function toggleAnswer() {
+            function showAnswer() {
                  if (currentQuestionList.length === 0) return;
-                const isHidden = answerContainer.classList.toggle('hidden');
-                toggleAnswerBtn.textContent = isHidden ? '显示答案' : '隐藏答案';
-                if (!isHidden) {
-                    // 显示答案后，显示反馈按钮
-                    feedbackButtons.classList.remove('hidden');
-                    toggleAnswerBtn.classList.add('hidden');
-                    nextQuestionBtn.classList.add('hidden');
-                }
+                answerContainer.classList.remove('hidden');
+                mindmapContainer.classList.remove('hidden'); // Also show mindmap if not already
+                actionButtons.classList.add('hidden');
+                feedbackButtons.classList.remove('hidden');
             }
 
-            // 处理“记住了”和“没记住”的逻辑
             function handleFeedback(remembered) {
                  if (currentQuestionList.length === 0) return;
                 
                 const currentQuestion = currentQuestionList[currentQuestionIndex];
                 if (!remembered) {
-                    // 如果没记住，且不在错题集里，则加入
                     if (!mistakeList.includes(currentQuestion)) {
                         mistakeList.push(currentQuestion);
                     }
                 }
 
-                // 移除当前问题（如果是在复习模式下答对，也从错题集中移除）
                  if(remembered && isReviewMode) {
                      const originalIndex = questions.indexOf(currentQuestion);
                      const mistakeIndex = mistakeList.findIndex(q => questions.indexOf(q) === originalIndex);
@@ -235,26 +250,12 @@
                      }
                  }
                  
-                 // 从当前列表中移除，表示已过一遍
                  currentQuestionList.splice(currentQuestionIndex, 1);
-                 
-                 // 自动进入下一题
                  displayQuestion();
             }
-
-            // 切换到下一题
-            function nextQuestion() {
-                if (currentQuestionList.length === 0) return;
-                currentQuestionIndex++;
-                if (currentQuestionIndex >= currentQuestionList.length) {
-                    currentQuestionIndex = 0; // 循环
-                }
-                displayQuestion();
-            }
             
-            // 事件监听
-            toggleAnswerBtn.addEventListener('click', toggleAnswer);
-            nextQuestionBtn.addEventListener('click', nextQuestion);
+            showMindmapBtn.addEventListener('click', showMindmap);
+            showAnswerBtn.addEventListener('click', showAnswer);
             rememberedBtn.addEventListener('click', () => handleFeedback(true));
             forgotBtn.addEventListener('click', () => handleFeedback(false));
 
@@ -276,6 +277,9 @@
                 currentQuestionIndex = 0;
                 displayQuestion();
             });
+
+            // Init
+            displayQuestion();
         });
     </script>
 </body>
